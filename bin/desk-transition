@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Safe display scenes: only active, current Hyprland outputs are targeted.
+set -euo pipefail
+monitors() { hyprctl -j monitors 2>/dev/null | jq '[.[] | select(.name|test("^[A-Za-z0-9._-]+$")) | {name,width:(.width//0),height:(.height//0),focused:(.focused//false)}]' 2>/dev/null || printf '[]'; }
+scan() { jq -cn --argjson monitors "$(monitors)" '{monitors:$monitors}'; }
+focus() { local name="$1"; monitors | jq -e --arg n "$name" '.[] | select(.name==$n)' >/dev/null || exit 2; hyprctl dispatch focusmonitor "$name"; scan; }
+desk() { local x=0 name width; while IFS=$'\t' read -r name width; do hyprctl keyword monitor "$name,preferred,${x}x0,1"; x=$((x + width)); done < <(monitors | jq -r '.[] | [.name,(.width|tonumber)] | @tsv'); scan; }
+laptop() { local name; name="$(monitors | jq -r '.[] | select(.name|test("^(eDP|LVDS)")) | .name' | head -n1)"; [[ -n "$name" ]] && focus "$name" || scan; }
+case "${1:---scan}" in --scan) scan ;; --desk) desk ;; --laptop) laptop ;; --focus) focus "${2:-}" ;; *) exit 2 ;; esac

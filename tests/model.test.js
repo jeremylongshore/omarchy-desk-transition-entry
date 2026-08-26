@@ -1,45 +1,5 @@
-const test = require("node:test")
-const assert = require("node:assert/strict")
-const fs = require("node:fs")
-const path = require("node:path")
-
-const Model = require("../Model.js")
-
-// TEMPLATE: capture real API responses into tests/fixtures/ and load them
-// here. Tests run against captured bodies, never the network.
-const fixture = (name) =>
-  fs.readFileSync(path.join(__dirname, "fixtures", name), "utf8")
-
-test("clean strips angle brackets so AutoText can never promote to StyledText", () => {
-  assert.equal(Model.clean('<img src="http://x/y.png">Bo'), 'img src="http://x/y.png"Bo')
-})
-
-test("clean strips control characters", () => {
-  assert.equal(Model.clean("a\x00b\x1fc\x7fd"), "abcd")
-})
-
-test("clean caps pathological length", () => {
-  assert.equal(Model.clean("x".repeat(500), 64).length, 64)
-})
-
-test("clean tolerates null and undefined", () => {
-  assert.equal(Model.clean(null), "")
-  assert.equal(Model.clean(undefined), "")
-})
-
-test("parseExample returns [] on malformed input, keeping last-good state", () => {
-  assert.deepEqual(Model.parseExample("not json"), [])
-  assert.deepEqual(Model.parseExample(""), [])
-  assert.deepEqual(Model.parseExample(null), [])
-})
-
-test("parseExample maps rows through clean", () => {
-  const rows = Model.parseExample(JSON.stringify([{ name: "<b>alpha</b>", value: "1" }]))
-  assert.equal(rows.length, 1)
-  assert.equal(rows[0].name, "balpha/b")
-})
-
-test("pillText is empty when there is nothing to say", () => {
-  assert.equal(Model.pillText([]), "")
-  assert.equal(Model.pillText(null), "")
-})
+const test=require("node:test"),assert=require("node:assert/strict"),M=require("../Model.js")
+test("parse rejects malformed monitor inventory",()=>{assert.equal(M.parse("bad").valid,false);assert.equal(M.parse(JSON.stringify({monitors:{}})).valid,false)})
+test("parse accepts only safe unique monitor names",()=>{const s=M.parse(JSON.stringify({monitors:[{name:"eDP-1",width:1920,height:1080,focused:true},{name:"DP-1",width:2560,height:1440},{name:"bad;rm",width:1},{name:"DP-1"}]}));assert.equal(s.monitors.length,2);assert.deepEqual(s.monitors[0],{name:"eDP-1",focused:true,width:1920,height:1080})})
+test("parse covers missing and hostile fields",()=>{const s=M.parse(JSON.stringify({monitors:[null,{name:3},{name:"HDMI-A-1",focused:"yes"},{name:"WL-1",width:"bad",height:50}]}));assert.equal(s.monitors.length,2);assert.equal(s.monitors[0].focused,false);assert.equal(s.monitors[0].width,0);assert.equal(M.clean(null),"");assert.equal(M.clean("x".repeat(50)).length,32)})
+test("parse bounds hostile metrics and model labels",()=>{const s=M.parse(JSON.stringify({monitors:Array.from({length:20},(_,i)=>({name:"DP-"+i,width:999999,height:-3}))}));assert.equal(s.monitors.length,M.MAX_MONITORS);assert.equal(s.monitors[0].width,20000);assert.equal(s.monitors[0].height,0);assert.equal(M.pillText({monitors:[]}),"DESK");assert.equal(M.pillText({monitors:[{}]}),"DESK 1");assert.match(M.tooltipText({monitors:[]}),/No active/);assert.equal(M.clean('<abc>',2),"ab")})

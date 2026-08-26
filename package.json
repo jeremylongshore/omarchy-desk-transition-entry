@@ -1,9 +1,10 @@
 {
-  "name": "omarchy-widget-template",
+  "name": "omarchy-desk-transition-entry",
   "version": "0.1.0",
   "private": true,
-  "description": "Omarchy bar widget template - dev harness for the Model.js data layer",
+  "description": "Hyprland display scene model test harness",
   "scripts": {
-    "test": "node --test tests/*.test.js"
-  }
+    "test": "c8 --all --include=Model.js --check-coverage --lines 95 --functions 95 --branches 90 node --test tests/*.test.js"
+  },
+  "devDependencies": { "c8": "^10.1.3" }
 }
