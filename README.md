@@ -4,10 +4,9 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U5S225PTME)
 
-Desk Transition inspects the current local Hyprland monitor inventory and offers
-a Desk arrangement for already active outputs plus a Laptop scene that returns
-focus to an internal eDP or LVDS panel. It does not hard-code output names or
-disable a display.
+Desk Transition gives Hyprland two safe display scenes: **Desk** lays every
+active output out left to right, while **Laptop** focuses an internal eDP or
+LVDS panel. It never hard-codes output names or disables a display.
 
 Every action reads a fresh monitor list and validates the selected name before
 dispatching a Hyprland command. With no Hyprland session it reports an empty

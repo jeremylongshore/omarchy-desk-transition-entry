@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "author": "Jeremy Longshore",
   "license": "MIT",
-  "description": "Safe local display arrangement and monitor focus scenes for Hyprland.",
+  "description": "One-click desk and laptop display scenes for Hyprland that arrange active monitors without disabling outputs.",
   "kinds": [
     "bar-widget"
   ],
@@ -14,7 +14,7 @@
   },
   "barWidget": {
     "displayName": "Desk Transition",
-    "description": "Arranges active displays for a desk and safely returns focus to an internal laptop display.",
+    "description": "Lay active outputs out for your desk, or focus the internal laptop panel without switching a display off.",
     "category": "Info",
     "aliases": [
       "desk-transition",
