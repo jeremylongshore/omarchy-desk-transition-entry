@@ -146,11 +146,17 @@ Panel {
             PanelSectionHeader { text: root.state.monitors.length + " ACTIVE OUTPUTS"; leftPadding: Style.space(16); foreground: root.bar ? root.bar.foreground : Color.foreground; fontFamily: root.bar ? root.bar.fontFamily : Style.font.family }
             Repeater {
               model: root.state.monitors
-              Item {
+              Rectangle {
                 required property var modelData
-                width: content.width
-                height: Style.space(28)
-                Text { anchors.left: parent.left; anchors.leftMargin: Style.space(16); anchors.verticalCenter: parent.verticalCenter; text: modelData.name + "  " + modelData.width + "×" + modelData.height + (modelData.focused ? "  · FOCUSED" : ""); textFormat: Text.PlainText; width: parent.width - Style.space(32); elide: Text.ElideRight; color: modelData.focused ? (root.bar ? root.bar.foreground : Color.foreground) : (root.bar ? Qt.darker(root.bar.foreground, 1.3) : Color.muted); font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall }
+                readonly property color selectedFill: root.bar ? Qt.lighter(root.bar.background, 1.12) : Qt.lighter(Color.background, 1.12)
+                x: Style.space(12)
+                width: content.width - Style.space(24)
+                height: Style.space(34)
+                radius: Style.space(3)
+                color: modelData.focused ? selectedFill : "transparent"
+                border.color: modelData.focused ? (root.bar ? root.bar.foreground : Color.foreground) : (root.bar ? Qt.darker(root.bar.foreground, 1.7) : Qt.darker(Color.foreground, 1.7))
+                border.width: 1
+                Text { anchors.left: parent.left; anchors.leftMargin: Style.space(8); anchors.right: parent.right; anchors.rightMargin: Style.space(8); anchors.verticalCenter: parent.verticalCenter; text: modelData.name + "  " + modelData.width + "×" + modelData.height + (modelData.focused ? "  · FOCUSED" : ""); textFormat: Text.PlainText; elide: Text.ElideRight; color: modelData.focused ? (root.bar ? root.bar.foreground : Color.foreground) : (root.bar ? Qt.darker(root.bar.foreground, 1.3) : Color.muted); font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall; font.bold: modelData.focused }
                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.run(["--focus", modelData.name]) }
               }
             }

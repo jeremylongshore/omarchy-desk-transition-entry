@@ -65,6 +65,25 @@ export WAYLAND_DISPLAY=wayland-1
 export SWAYSOCK=\$(ls \$XDG_RUNTIME_DIR/sway-ipc.*.sock 2>/dev/null | head -1)
 swaymsg output HEADLESS-1 resolution "\$RES" >/dev/null 2>&1
 
+# A headless compositor has no Hyprland inventory. Feed the plugin a deterministic
+# two-output fixture for this screenshot only, so the preview demonstrates the
+# product's desk and laptop choices instead of documenting the empty state.
+mkdir -p /tmp/desk-transition-preview/bin
+cat > /tmp/desk-transition-preview/monitors.json <<'JSON'
+[
+  {"name":"eDP-1","width":1920,"height":1080,"focused":true},
+  {"name":"DP-1","width":2560,"height":1440,"focused":false}
+]
+JSON
+cat > /tmp/desk-transition-preview/bin/hyprctl <<'SH'
+#!/bin/sh
+if [ "\$1" = "-j" ] && [ "\$2" = "monitors" ]; then
+  cat /tmp/desk-transition-preview/monitors.json
+fi
+SH
+chmod 755 /tmp/desk-transition-preview/bin/hyprctl
+export PATH=/tmp/desk-transition-preview/bin:\$PATH
+
 pkill -f 'qs -p' 2>/dev/null; sleep 1
 # Purge EVERY directory that declares this module id, not just the one matching
 # our folder name. The rig accumulates installs from earlier runs and from the
