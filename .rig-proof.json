@@ -1,8 +1,13 @@
 {
-  "fingerprint": "fba00650ed14644cdcdd706071cf111dc83e242645b2276428041bf1bc370a02",
+  "fingerprint": "f4a9906fa33f114f67f1bb28173fd276f1a01189f477820cbc97c5b2c08f024c",
+  "sourceCommit": "0390398f15fa1515b0ace6ec372d6b49a957511f",
+  "sourceDirty": false,
+  "sourcePackageSha256": "92f0cc5e74eebe3a3c4d920756fae1289249d78b51b2d61c2c48a3a350b74931",
+  "remotePackageSha256": "92f0cc5e74eebe3a3c4d920756fae1289249d78b51b2d61c2c48a3a350b74931",
   "rig": "intent-ops-buzz/omarchy-rig",
+  "evidenceBoundary": "real Omarchy validator and qmllint; no live compositor render",
   "omarchyPluginValidate": 0,
   "qmllintErrors": 0,
-  "validatedAtEpoch": 1787969939,
-  "validatedAt": "2026-08-29T02:18:59Z"
+  "validatedAtEpoch": 1788051747,
+  "validatedAt": "2026-08-30T01:02:27Z"
 }
