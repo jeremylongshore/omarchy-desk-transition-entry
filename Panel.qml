@@ -18,6 +18,7 @@ Panel {
   readonly property string helperPath: Qt.resolvedUrl("bin/desk-transition").toString().replace(/^file:\/\//, "")
   property var state: ({ valid: false, monitors: [] })
   property bool loaded: false
+  property string actionStatus: ""
   readonly property bool isAlert: false
   readonly property string label: loaded ? Model.pillText(state) : "DESK"
   readonly property string tooltip: loaded ? Model.tooltipText(state) : "Reading local display state…"
@@ -28,14 +29,28 @@ Panel {
   function toggle() { if (opened) close(); else openFromHotkey() }
   function switchPanel(direction) { return bar && typeof bar.switchPanelFrom === "function" ? bar.switchPanelFrom(barIdentity, direction) : false }
   function refresh() { if (!scan.running) scan.running = true }
-  function run(args) { if (!action.running) { action.command = [helperPath].concat(args); action.running = true } }
+  function run(args) {
+    if (action.running) return
+    root.actionStatus = "Applying display scene…"
+    action.command = [helperPath].concat(args)
+    action.running = true
+  }
 
   Process {
     id: scan
     command: [root.helperPath, "--scan"]
     stdout: StdioCollector { waitForEnd: true; onStreamFinished: { var next = Model.parse(text); if (next.valid) { root.state = next; root.loaded = true } } }
   }
-  Process { id: action; command: []; onExited: root.refresh() }
+  Process {
+    id: action
+    command: []
+    onExited: function(code) {
+      root.actionStatus = code === 0
+        ? "Scene applied. Active display state refreshed."
+        : "Scene did not complete. Active display state refreshed."
+      root.refresh()
+    }
+  }
   Timer { interval: 15000; running: true; repeat: true; triggeredOnStart: true; onTriggered: root.refresh() }
 
   IpcHandler {
@@ -46,6 +61,8 @@ Panel {
     function hide(): void { root.close() }
     function toggle(): void { root.toggle() }
     function refresh(): void { if (root.hostWidget && typeof root.hostWidget.broadcast === "function") root.hostWidget.broadcast("refresh"); else root.refresh() }
+    function desk(): void { root.run(["--desk"]) }
+    function laptop(): void { root.run(["--laptop"]) }
   }
 
   KeyboardPanel {
@@ -96,6 +113,8 @@ Panel {
               color: "#151b25"
               border.color: "#5b94d6"
               border.width: 1
+              Accessible.role: Accessible.Button
+              Accessible.name: "Apply Desk scene"
               Column {
                 anchors.fill: parent
                 anchors.margins: Style.space(12)
@@ -119,6 +138,8 @@ Panel {
               color: "#151b25"
               border.color: "#7a9b7a"
               border.width: 1
+              Accessible.role: Accessible.Button
+              Accessible.name: "Apply Laptop scene"
               Column {
                 anchors.fill: parent
                 anchors.margins: Style.space(12)
@@ -129,6 +150,20 @@ Panel {
               }
               MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.run(["--laptop"]) }
             }
+          }
+
+          Text {
+            visible: root.actionStatus !== ""
+            x: Style.space(16)
+            width: parent.width - Style.space(32)
+            text: root.actionStatus
+            textFormat: Text.PlainText
+            wrapMode: Text.WordWrap
+            color: root.bar ? root.bar.foreground : Color.foreground
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.bodySmall
+            Accessible.role: Accessible.StaticText
+            Accessible.name: root.actionStatus
           }
 
           Column {
@@ -160,6 +195,30 @@ Panel {
                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.run(["--focus", modelData.name]) }
               }
             }
+          }
+          Rectangle {
+            x: Style.space(12)
+            width: parent.width - Style.space(24)
+            height: Style.space(36)
+            radius: Style.space(3)
+            color: "#111923"
+            border.color: "#354b66"
+            border.width: 1
+            Text {
+              anchors.centerIn: parent
+              width: parent.width - Style.space(16)
+              text: "LOCAL INVENTORY  ·  0 OUTPUTS DISABLED"
+              textFormat: Text.PlainText
+              horizontalAlignment: Text.AlignHCenter
+              elide: Text.ElideRight
+              color: "#77b8ff"
+              font.family: root.bar ? root.bar.fontFamily : Style.font.family
+              font.pixelSize: Style.font.bodySmall
+              font.bold: true
+              font.letterSpacing: 1
+            }
+            Accessible.role: Accessible.StaticText
+            Accessible.name: "Local inventory. Zero outputs disabled."
           }
           Item { width: 1; height: Style.space(6) }
         }

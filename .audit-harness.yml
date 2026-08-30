@@ -1,0 +1,4 @@
+# Desk Transition is a QML frontend with an offline JavaScript model and a
+# bounded Bash helper. Pin the deterministic classifier residue explicitly.
+classify_pins:
+  - frontend

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "id": "io.github.jeremylongshore.desk-transition",
   "name": "Desk Transition",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Jeremy Longshore",
   "license": "MIT",
-  "description": "One-click desk and laptop display scenes for Hyprland that arrange active monitors without disabling outputs.",
+  "description": "Desk Transition makes multi-monitor changes safe with two Hyprland scenes. Desk reads active outputs and lays every connected display left to right using its reported width. Laptop finds the internal eDP or LVDS panel and focuses it without disabling external screens. The panel previews both choices, lists detected resolutions, marks the focused output, and lets you focus any display directly. Each action re-reads local state, validates output names, stays offline, and never turns a monitor off.",
   "kinds": [
     "bar-widget"
   ],
@@ -14,7 +14,7 @@
   },
   "barWidget": {
     "displayName": "Desk Transition",
-    "description": "Lay active outputs out for your desk, or focus the internal laptop panel without switching a display off.",
+    "description": "Desk Transition makes multi-monitor changes safe with two Hyprland scenes. Desk reads active outputs and lays every connected display left to right using its reported width. Laptop finds the internal eDP or LVDS panel and focuses it without disabling external screens. The panel previews both choices, lists detected resolutions, marks the focused output, and lets you focus any display directly. Each action re-reads local state, validates output names, stays offline, and never turns a monitor off.",
     "category": "Info",
     "aliases": [
       "desk-transition",

@@ -15,11 +15,18 @@ scripts/gen-changelog.py . "<Plugin Name>" "<version>"
 The generator normalises em and en dashes, because a changelog is shipped prose
 and gate c28 refuses them.
 
-## [Unreleased]
+## [0.2.0] - 2026-08-29
 
-Nothing yet.
+### Changed
 
-## [1.0.0] - unreleased
+- Added exact marketplace copy, isolated Buzz action/render proof, and explicit
+  hash-bound visual approval.
+- Bounded Hyprland discovery by time, bytes, rows, connector length, and display
+  geometry.
+- Added visible action outcomes, accessibility contracts, mutation analysis,
+  race runs, deterministic audit, ShellCheck, and current C28 through C43 gates.
+
+## [0.1.0] - 2026-08-28
 
 ### Added
 

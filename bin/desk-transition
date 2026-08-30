@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
 # Safe display scenes: only active, current Hyprland outputs are targeted.
 set -euo pipefail
-monitors() { hyprctl -j monitors 2>/dev/null | jq '[.[] | select(.name|test("^[A-Za-z0-9._-]+$")) | {name,width:(.width//0),height:(.height//0),focused:(.focused//false)}]' 2>/dev/null || printf '[]'; }
+export LC_ALL=C
+monitors() {
+  local raw
+  raw="$(timeout 3s hyprctl -j monitors 2>/dev/null | head -c 65537)" || { printf '[]'; return; }
+  (( ${#raw} <= 65536 )) || { printf '[]'; return; }
+  jq -c '[limit(8; .[]
+    | select((.name | type) == "string" and (.name | length) <= 32 and (.name | test("^[A-Za-z0-9._-]+$")))
+    | {name,
+       width: ((.width // 0) | if type == "number" then (floor | if . < 0 then 0 elif . > 20000 then 20000 else . end) else 0 end),
+       height: ((.height // 0) | if type == "number" then (floor | if . < 0 then 0 elif . > 20000 then 20000 else . end) else 0 end),
+       focused: (.focused == true)})]' <<<"$raw" 2>/dev/null || printf '[]'
+}
 scan() { jq -cn --argjson monitors "$(monitors)" '{monitors:$monitors}'; }
 focus() { local name="$1"; monitors | jq -e --arg n "$name" '.[] | select(.name==$n)' >/dev/null || exit 2; hyprctl dispatch focusmonitor "$name"; scan; }
 desk() { local x=0 name width; while IFS=$'\t' read -r name width; do hyprctl keyword monitor "$name,preferred,${x}x0,1"; x=$((x + width)); done < <(monitors | jq -r '.[] | [.name,(.width|tonumber)] | @tsv'); scan; }
