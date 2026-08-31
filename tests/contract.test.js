@@ -27,7 +27,12 @@ test("marketplace copy and authored banner are exact release artifacts", () => {
   const manifest = JSON.parse(read("manifest.json"))
   assert.equal(manifest.description.length, 500)
   assert.equal(manifest.barWidget.description.length, 500)
-  assert.match(manifest.description, /never turns a monitor off/)
+  assert.equal(manifest.description, manifest.barWidget.description)
+  for (const claim of [
+    "active outputs", "reported width", "first active eDP or LVDS output",
+    "without disabling another screen", "name, resolution, and focus state",
+    "validates output names", "No network, credentials, or display-disable command"
+  ]) assert.match(manifest.description, new RegExp(claim))
   const banner = read("assets/banner.svg")
   assert.match(banner, /<title id="title">Desk Transition<\/title>/)
   assert.match(banner, /DISCOVERED DISPLAYS, SAFER SCENES/)

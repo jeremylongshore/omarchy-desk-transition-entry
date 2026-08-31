@@ -4,9 +4,9 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U5S225PTME)
 
-Desk Transition gives Hyprland two safe display scenes: **Desk** lays every
-active output out left to right, while **Laptop** focuses an internal eDP or
-LVDS panel. It never hard-codes output names or disables a display.
+Desk Transition gives Hyprland two local display actions: **Desk** lays every
+active output out left to right, while **Laptop** focuses the first active eDP
+or LVDS panel. It never hard-codes output names or disables a display.
 
 ![Desk Transition showing both scenes and two discovered displays in Omarchy](preview.png)
 

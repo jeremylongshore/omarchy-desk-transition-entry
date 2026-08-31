@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "author": "Jeremy Longshore",
   "license": "MIT",
-  "description": "Desk Transition makes multi-monitor changes safe with two Hyprland scenes. Desk reads active outputs and lays every connected display left to right using its reported width. Laptop finds the internal eDP or LVDS panel and focuses it without disabling external screens. The panel previews both choices, lists detected resolutions, marks the focused output, and lets you focus any display directly. Each action re-reads local state, validates output names, stays offline, and never turns a monitor off.",
+  "description": "Desk Transition gives Hyprland two local display actions. Desk reads active outputs and arranges them left to right by reported width. Laptop selects the first active eDP or LVDS output and focuses it without disabling another screen. The panel previews both actions, shows each active output's name, resolution, and focus state, and lets you focus one directly. Each action re-reads state and validates output names. No network, credentials, or display-disable command. State refreshes after action.",
   "kinds": [
     "bar-widget"
   ],
@@ -14,7 +14,7 @@
   },
   "barWidget": {
     "displayName": "Desk Transition",
-    "description": "Desk Transition makes multi-monitor changes safe with two Hyprland scenes. Desk reads active outputs and lays every connected display left to right using its reported width. Laptop finds the internal eDP or LVDS panel and focuses it without disabling external screens. The panel previews both choices, lists detected resolutions, marks the focused output, and lets you focus any display directly. Each action re-reads local state, validates output names, stays offline, and never turns a monitor off.",
+    "description": "Desk Transition gives Hyprland two local display actions. Desk reads active outputs and arranges them left to right by reported width. Laptop selects the first active eDP or LVDS output and focuses it without disabling another screen. The panel previews both actions, shows each active output's name, resolution, and focus state, and lets you focus one directly. Each action re-reads state and validates output names. No network, credentials, or display-disable command. State refreshes after action.",
     "category": "Info",
     "aliases": [
       "desk-transition",
