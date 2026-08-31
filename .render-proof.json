@@ -1,13 +1,13 @@
 {
-  "fingerprint": "f4a9906fa33f114f67f1bb28173fd276f1a01189f477820cbc97c5b2c08f024c",
-  "sourceCommit": "0390398f15fa1515b0ace6ec372d6b49a957511f",
+  "fingerprint": "6241267d214bd57e2b53329bb7995a4ec6db3c282289fe08920495911e58b0b6",
+  "sourceCommit": "238ce3baaf4c23a140b1ab79a52c11b76a40cd0f",
   "sourceDirty": false,
-  "sourcePackageSha256": "e31244b2f60bac14569b4e5ef1ca7a5c90caf003d3a8f34cd81f034b80948fdc",
-  "remotePackageSha256": "e31244b2f60bac14569b4e5ef1ca7a5c90caf003d3a8f34cd81f034b80948fdc",
+  "sourcePackageSha256": "61a827002004f45a3eca4fb6eb17c363df13ac8799977b84a40cf2df8bae041e",
+  "remotePackageSha256": "61a827002004f45a3eca4fb6eb17c363df13ac8799977b84a40cf2df8bae041e",
   "rig": "intent-ops-buzz/omarchy-rig",
-  "runId": "desk-transition-3988649",
-  "rawShellLogSha256": "0d62955f59028939e20bae890bc7c60d7a474c52eecb532957cc38ae7e58c443",
-  "hyprlandActionLogSha256": "f8ba0d3932949ff0a75d6f598be9d9c706459bcb28a6e621fe67822f1b1b9fe1",
+  "runId": "desk-transition-3162035",
+  "rawShellLogSha256": "0b478149febbba612dea519325333c7d86c48574a0e8734184c30fe5f7061339",
+  "hyprlandActionLogSha256": "7e3cfbe22b9456b34d2f2377b10e55216445453c181abd7117bd3364ca5e2a71",
   "fixtureSha256": "72665a1603d1e88bf8baabd45acb42e0b75500de91d9a048c3a3eff7b14cc7f7",
   "packageBoundary": "repository shipment excluding receipts, tests, developer scripts, reports, and preview",
   "evidenceBoundary": "isolated real Omarchy shell and unchanged QML/helper under a dedicated headless compositor; deterministic local Hyprland inventory; live IPC Desk and Laptop actions; direct full-frame grim capture with no crop or image post-processing",
@@ -24,17 +24,17 @@
   "outputScale": 1.25,
   "visualInspection": {
     "status": "approved",
-    "previewSha256": "a34ab9673f262a7b979ea08278b9f132f0707737c051b9ca6bf003afde07a989",
+    "previewSha256": "eeadc995f594cf71213de7472cac46ac12bf5a0658abf402b33df3de818bd5b3",
     "inspector": "jeremylongshore",
-    "inspectedAt": "2026-08-30T01:03:00Z",
+    "inspectedAt": "2026-08-31T21:46:21Z",
     "checks": [
       "product value visible at marketplace scale",
       "no primary content clipped",
       "plugin-specific visual identity"
     ]
   },
-  "previewSha256": "a34ab9673f262a7b979ea08278b9f132f0707737c051b9ca6bf003afde07a989",
+  "previewSha256": "eeadc995f594cf71213de7472cac46ac12bf5a0658abf402b33df3de818bd5b3",
   "dimensions": "1280 x 720",
   "nonblackCoverage": 0.382883,
-  "capturedAt": "2026-08-30T01:02:51Z"
+  "capturedAt": "2026-08-31T21:46:01Z"
 }
