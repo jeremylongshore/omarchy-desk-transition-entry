@@ -1,13 +1,13 @@
 {
-  "fingerprint": "6241267d214bd57e2b53329bb7995a4ec6db3c282289fe08920495911e58b0b6",
-  "sourceCommit": "238ce3baaf4c23a140b1ab79a52c11b76a40cd0f",
+  "fingerprint": "cce29fca2636090c0f10cd3102a8de003c5e379d4e2ad9aebed98aec6e768d26",
+  "sourceCommit": "018b7f615bad86e2ceafc1bd79a138357d59819e",
   "sourceDirty": false,
-  "sourcePackageSha256": "61a827002004f45a3eca4fb6eb17c363df13ac8799977b84a40cf2df8bae041e",
-  "remotePackageSha256": "61a827002004f45a3eca4fb6eb17c363df13ac8799977b84a40cf2df8bae041e",
+  "sourcePackageSha256": "84096e9002d6614ca08a6c72e6505fcc4774ac531343f7e33a61e4f414709ad0",
+  "remotePackageSha256": "84096e9002d6614ca08a6c72e6505fcc4774ac531343f7e33a61e4f414709ad0",
   "rig": "intent-ops-buzz/omarchy-rig",
-  "runId": "desk-transition-3162035",
-  "rawShellLogSha256": "0b478149febbba612dea519325333c7d86c48574a0e8734184c30fe5f7061339",
-  "hyprlandActionLogSha256": "7e3cfbe22b9456b34d2f2377b10e55216445453c181abd7117bd3364ca5e2a71",
+  "runId": "desk-transition-85410",
+  "rawShellLogSha256": "abc7a5923652905e22eb59426fa6df7f5ca3769192e18417a83cd13a9b834c3f",
+  "hyprlandActionLogSha256": "ce7b9dc711725c44763c12bf9bbc37b8f8ccd205679101987490fab6daaac570",
   "fixtureSha256": "72665a1603d1e88bf8baabd45acb42e0b75500de91d9a048c3a3eff7b14cc7f7",
   "packageBoundary": "repository shipment excluding receipts, tests, developer scripts, reports, and preview",
   "evidenceBoundary": "isolated real Omarchy shell and unchanged QML/helper under a dedicated headless compositor; deterministic local Hyprland inventory; live IPC Desk and Laptop actions; direct full-frame grim capture with no crop or image post-processing",
@@ -24,17 +24,17 @@
   "outputScale": 1.25,
   "visualInspection": {
     "status": "approved",
-    "previewSha256": "eeadc995f594cf71213de7472cac46ac12bf5a0658abf402b33df3de818bd5b3",
-    "inspector": "jeremylongshore",
-    "inspectedAt": "2026-08-31T21:46:21Z",
+    "previewSha256": "57f1235f9fc4b095f59df766ac16ec490edf40109f898ad5b7889dde3255a47f",
+    "inspector": "Claude (agent) for jeremylongshore",
+    "inspectedAt": "2026-11-15T08:36:28Z",
     "checks": [
       "product value visible at marketplace scale",
       "no primary content clipped",
       "plugin-specific visual identity"
     ]
   },
-  "previewSha256": "eeadc995f594cf71213de7472cac46ac12bf5a0658abf402b33df3de818bd5b3",
+  "previewSha256": "57f1235f9fc4b095f59df766ac16ec490edf40109f898ad5b7889dde3255a47f",
   "dimensions": "1280 x 720",
   "nonblackCoverage": 0.382883,
-  "capturedAt": "2026-08-31T21:46:01Z"
+  "capturedAt": "2026-11-15T08:36:22Z"
 }
