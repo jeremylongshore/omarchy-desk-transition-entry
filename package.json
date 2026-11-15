@@ -1,6 +1,6 @@
 {
   "name": "omarchy-desk-transition-entry",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Hyprland display scene model test harness",
   "scripts": {

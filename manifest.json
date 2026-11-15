@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.jeremylongshore.desk-transition",
   "name": "Desk Transition",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Jeremy Longshore",
   "license": "MIT",
   "description": "Desk Transition gives Hyprland two local display actions. Desk reads active outputs and arranges them left to right by reported width. Laptop selects the first active eDP or LVDS output and focuses it without disabling another screen. The panel previews both actions, shows each active output's name, resolution, and focus state, and lets you focus one directly. Each action re-reads state and validates output names. No network, credentials, or display-disable command. State refreshes after action.",
