@@ -2,6 +2,9 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+// Qt 6.12 adds its own Color type, so Omarchy's palette singleton must be
+// qualified (docs/omarchy-shell.md, Theme tokens).
+import qs.Commons as Commons
 import qs.Ui
 import "Model.js" as Model
 
@@ -97,10 +100,10 @@ Panel {
           PanelHero {
             title: "DISPLAY SCENES"
             meta: "Arrange active outputs. Never turn one off."
-            foreground: root.bar ? root.bar.foreground : Color.foreground
+            foreground: root.bar ? root.bar.foreground : Commons.Color.foreground
             fontFamily: root.bar ? root.bar.fontFamily : Style.font.family
           }
-          PanelSeparator { foreground: root.bar ? root.bar.foreground : Color.foreground }
+          PanelSeparator { foreground: root.bar ? root.bar.foreground : Commons.Color.foreground }
 
           Row {
             x: Style.space(16)
@@ -119,7 +122,7 @@ Panel {
                 anchors.fill: parent
                 anchors.margins: Style.space(12)
                 spacing: Style.space(7)
-                Text { text: "DESK SCENE"; textFormat: Text.PlainText; width: parent.width; elide: Text.ElideRight; color: root.bar ? root.bar.foreground : Color.foreground; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.body; font.bold: true; font.letterSpacing: 1 }
+                Text { text: "DESK SCENE"; textFormat: Text.PlainText; width: parent.width; elide: Text.ElideRight; color: root.bar ? root.bar.foreground : Commons.Color.foreground; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.body; font.bold: true; font.letterSpacing: 1 }
                 Row {
                   width: parent.width
                   height: Style.space(34)
@@ -127,7 +130,7 @@ Panel {
                   Rectangle { width: (parent.width - parent.spacing) / 2; height: parent.height; color: "transparent"; border.color: "#7aa9df"; border.width: 1 }
                   Rectangle { width: (parent.width - parent.spacing) / 2; height: parent.height; color: "transparent"; border.color: "#7aa9df"; border.width: 1 }
                 }
-                Text { text: "Lay active displays out left to right."; textFormat: Text.PlainText; width: parent.width; wrapMode: Text.WordWrap; color: root.bar ? Qt.darker(root.bar.foreground, 1.3) : Color.muted; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall }
+                Text { text: "Lay active displays out left to right."; textFormat: Text.PlainText; width: parent.width; wrapMode: Text.WordWrap; color: root.bar ? Qt.darker(root.bar.foreground, 1.3) : Commons.Color.muted; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall }
               }
               MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.run(["--desk"]) }
             }
@@ -144,9 +147,9 @@ Panel {
                 anchors.fill: parent
                 anchors.margins: Style.space(12)
                 spacing: Style.space(7)
-                Text { text: "LAPTOP SCENE"; textFormat: Text.PlainText; width: parent.width; elide: Text.ElideRight; color: root.bar ? root.bar.foreground : Color.foreground; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.body; font.bold: true; font.letterSpacing: 1 }
+                Text { text: "LAPTOP SCENE"; textFormat: Text.PlainText; width: parent.width; elide: Text.ElideRight; color: root.bar ? root.bar.foreground : Commons.Color.foreground; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.body; font.bold: true; font.letterSpacing: 1 }
                 Rectangle { width: parent.width * 0.58; height: Style.space(34); color: "transparent"; border.color: "#9fc29f"; border.width: 1 }
-                Text { text: "Focus your internal panel without disabling outputs."; textFormat: Text.PlainText; width: parent.width; wrapMode: Text.WordWrap; color: root.bar ? Qt.darker(root.bar.foreground, 1.3) : Color.muted; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall }
+                Text { text: "Focus your internal panel without disabling outputs."; textFormat: Text.PlainText; width: parent.width; wrapMode: Text.WordWrap; color: root.bar ? Qt.darker(root.bar.foreground, 1.3) : Commons.Color.muted; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall }
               }
               MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.run(["--laptop"]) }
             }
@@ -159,7 +162,7 @@ Panel {
             text: root.actionStatus
             textFormat: Text.PlainText
             wrapMode: Text.WordWrap
-            color: root.bar ? root.bar.foreground : Color.foreground
+            color: root.bar ? root.bar.foreground : Commons.Color.foreground
             font.family: root.bar ? root.bar.fontFamily : Style.font.family
             font.pixelSize: Style.font.bodySmall
             Accessible.role: Accessible.StaticText
@@ -170,28 +173,28 @@ Panel {
             visible: root.loaded && root.state.monitors.length === 0
             width: parent.width
             spacing: Style.space(4)
-            PanelSectionHeader { text: "WAITING FOR DISPLAYS"; leftPadding: Style.space(16); foreground: root.bar ? root.bar.foreground : Color.foreground; fontFamily: root.bar ? root.bar.fontFamily : Style.font.family }
-            Text { anchors.left: parent.left; anchors.leftMargin: Style.space(16); width: parent.width - Style.space(32); text: "No active outputs were reported by Hyprland. Connect a display, then choose a scene."; textFormat: Text.PlainText; wrapMode: Text.WordWrap; color: root.bar ? Qt.darker(root.bar.foreground, 1.3) : Color.muted; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall }
+            PanelSectionHeader { text: "WAITING FOR DISPLAYS"; leftPadding: Style.space(16); foreground: root.bar ? root.bar.foreground : Commons.Color.foreground; fontFamily: root.bar ? root.bar.fontFamily : Style.font.family }
+            Text { anchors.left: parent.left; anchors.leftMargin: Style.space(16); width: parent.width - Style.space(32); text: "No active outputs were reported by Hyprland. Connect a display, then choose a scene."; textFormat: Text.PlainText; wrapMode: Text.WordWrap; color: root.bar ? Qt.darker(root.bar.foreground, 1.3) : Commons.Color.muted; font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall }
           }
 
           Column {
             visible: root.state.monitors.length > 0
             width: parent.width
             spacing: Style.space(4)
-            PanelSectionHeader { text: root.state.monitors.length + " ACTIVE OUTPUTS"; leftPadding: Style.space(16); foreground: root.bar ? root.bar.foreground : Color.foreground; fontFamily: root.bar ? root.bar.fontFamily : Style.font.family }
+            PanelSectionHeader { text: root.state.monitors.length + " ACTIVE OUTPUTS"; leftPadding: Style.space(16); foreground: root.bar ? root.bar.foreground : Commons.Color.foreground; fontFamily: root.bar ? root.bar.fontFamily : Style.font.family }
             Repeater {
               model: root.state.monitors
               Rectangle {
                 required property var modelData
-                readonly property color selectedFill: root.bar ? Qt.lighter(root.bar.background, 1.12) : Qt.lighter(Color.background, 1.12)
+                readonly property color selectedFill: root.bar ? Qt.lighter(root.bar.background, 1.12) : Qt.lighter(Commons.Color.background, 1.12)
                 x: Style.space(12)
                 width: content.width - Style.space(24)
                 height: Style.space(34)
                 radius: Style.space(3)
                 color: modelData.focused ? selectedFill : "transparent"
-                border.color: modelData.focused ? (root.bar ? root.bar.foreground : Color.foreground) : (root.bar ? Qt.darker(root.bar.foreground, 1.7) : Qt.darker(Color.foreground, 1.7))
+                border.color: modelData.focused ? (root.bar ? root.bar.foreground : Commons.Color.foreground) : (root.bar ? Qt.darker(root.bar.foreground, 1.7) : Qt.darker(Commons.Color.foreground, 1.7))
                 border.width: 1
-                Text { anchors.left: parent.left; anchors.leftMargin: Style.space(8); anchors.right: parent.right; anchors.rightMargin: Style.space(8); anchors.verticalCenter: parent.verticalCenter; text: modelData.name + "  " + modelData.width + "×" + modelData.height + (modelData.focused ? "  · FOCUSED" : ""); textFormat: Text.PlainText; elide: Text.ElideRight; color: modelData.focused ? (root.bar ? root.bar.foreground : Color.foreground) : (root.bar ? Qt.darker(root.bar.foreground, 1.3) : Color.muted); font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall; font.bold: modelData.focused }
+                Text { anchors.left: parent.left; anchors.leftMargin: Style.space(8); anchors.right: parent.right; anchors.rightMargin: Style.space(8); anchors.verticalCenter: parent.verticalCenter; text: modelData.name + "  " + modelData.width + "×" + modelData.height + (modelData.focused ? "  · FOCUSED" : ""); textFormat: Text.PlainText; elide: Text.ElideRight; color: modelData.focused ? (root.bar ? root.bar.foreground : Commons.Color.foreground) : (root.bar ? Qt.darker(root.bar.foreground, 1.3) : Commons.Color.muted); font.family: root.bar ? root.bar.fontFamily : Style.font.family; font.pixelSize: Style.font.bodySmall; font.bold: modelData.focused }
                 MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.run(["--focus", modelData.name]) }
               }
             }
