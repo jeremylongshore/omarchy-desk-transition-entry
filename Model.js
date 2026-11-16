@@ -17,7 +17,7 @@ function dimension(value) {
 }
 
 function invalidState() {
-  return { valid: false, monitors: [] }
+  return { valid: false, monitors: [], disabled: 0 }
 }
 
 function parse(raw) {
@@ -46,7 +46,7 @@ function parse(raw) {
       height: dimension(monitor.height)
     })
   })
-  return { valid: true, monitors: monitors }
+  return { valid: true, monitors: monitors, disabled: Math.min(MAX_MONITORS, dimension(input.disabled)) }
 }
 
 function pillText(state) {
@@ -60,6 +60,59 @@ function tooltipText(state) {
     : "No active displays reported"
 }
 
+// The local path of a file URL. QUrl text keeps a literal percent sign (and a
+// hash or a question mark) escaped, so "dt%41" arrives as "dt%2541" and the
+// helper would not be found. Spaces and non-ASCII letters arrive already plain.
+function localPath(url) {
+  var text = String(url).replace(/^file:\/\//, "")
+  try { return decodeURIComponent(text) } catch (error) { return text }
+}
+
+// The panel footer reads the compositor's own inventory: how many outputs are
+// active and how many the system has turned off (a closed lid, for one). It
+// never claims a count before the first scan has answered.
+function inventoryText(state, loaded) {
+  if (!loaded || !state || !state.monitors) return "LOCAL INVENTORY  \u00b7  READING"
+  return "LOCAL INVENTORY  \u00b7  " + state.monitors.length + " ACTIVE  \u00b7  "
+    + (state.disabled || 0) + " DISABLED"
+}
+
+function inventorySpoken(state, loaded) {
+  if (!loaded || !state || !state.monitors) return "Local inventory. Reading displays."
+  return "Local inventory. Active outputs: " + state.monitors.length
+    + ". Disabled outputs: " + (state.disabled || 0) + "."
+}
+
+// Keyboard rows, in reading order: the Desk card, the Laptop card, then one row
+// per active output.
+function rowCount(state) {
+  return 2 + (state && state.monitors ? state.monitors.length : 0)
+}
+
+// -1 means nothing is selected, so Enter on a freshly opened panel does nothing.
+function clampSelection(index, count) {
+  if (count <= 0 || index < 0) return -1
+  return Math.min(index, count - 1)
+}
+
+// Down and Right step forward, Up and Left step back. From nothing, forward
+// lands on the first row and back on the last. The ends do not wrap.
+function moveSelection(index, count, dx, dy) {
+  if (count <= 0) return -1
+  var step = dy !== 0 ? dy : dx
+  if (step === 0) return clampSelection(index, count)
+  if (index < 0) return step > 0 ? 0 : count - 1
+  return Math.max(0, Math.min(count - 1, index + (step > 0 ? 1 : -1)))
+}
+
+// The helper arguments one row applies, or null when the row is gone.
+function actionArgs(index, state) {
+  if (index === 0) return ["--desk"]
+  if (index === 1) return ["--laptop"]
+  var monitor = state && state.monitors ? state.monitors[index - 2] : null
+  return monitor ? ["--focus", monitor.name] : null
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
     MAX_MONITORS: MAX_MONITORS,
@@ -68,6 +121,13 @@ if (typeof module !== "undefined") {
     dimension: dimension,
     parse: parse,
     pillText: pillText,
-    tooltipText: tooltipText
+    tooltipText: tooltipText,
+    localPath: localPath,
+    inventoryText: inventoryText,
+    inventorySpoken: inventorySpoken,
+    rowCount: rowCount,
+    clampSelection: clampSelection,
+    moveSelection: moveSelection,
+    actionArgs: actionArgs
   }
 }

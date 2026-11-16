@@ -11,6 +11,8 @@ tell the same product story.
 - `preview.png` is accepted only with current-tree Buzz provenance, exact
   1280x720 dimensions, a clean shell-log hash, and visual approval.
 - The helper performs bounded local Hyprland reads, validates connector names,
-  and never emits a display-disable command.
+  and never emits a display-disable command. It sends the Lua form first and the
+  classic form second, and arranges by position only so mode, refresh rate and
+  scale are kept.
 
 `tests/contract.test.js` and gate C43 enforce the machine-checkable portions.

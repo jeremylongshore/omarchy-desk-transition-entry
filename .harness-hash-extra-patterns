@@ -21,3 +21,4 @@ tests/RTM.md
 tests/PERSONAS.md
 tests/JOURNEYS.md
 stryker.config.json
+tests/hyprctl-stub.sh
