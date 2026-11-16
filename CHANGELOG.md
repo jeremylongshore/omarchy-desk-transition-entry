@@ -73,6 +73,8 @@ and gate c28 refuses them.
   focuses an output.
 - Render the preview from a HiDPI laptop plus a 1440p monitor fixture, so the
   scaled layout is what the receipt records.
+- Run ShellCheck on `bin/desk-transition` and the stand-in `hyprctl` in CI. The
+  glob covered `scripts/`, `e2e/` and the hook but never the shipped helper.
 - Re-sync the vendored gate lane to canonical `f79d8c7`, where C42 also scans
   shipped Perl helpers. The lane freshness check passes against it.
 

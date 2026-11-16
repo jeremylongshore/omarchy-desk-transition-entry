@@ -79,7 +79,8 @@ npm run test:race
 npm run test:mutation
 npm run audit
 npm audit --audit-level=low
-shellcheck --severity=warning scripts/*.sh e2e/*.sh .githooks/pre-push
+shellcheck --severity=warning scripts/*.sh e2e/*.sh .githooks/pre-push \
+  bin/desk-transition tests/hyprctl-stub.sh
 bash scripts/run-plugin-gates.sh
 bash scripts/check-lane-freshness.sh
 npm run test:e2e
