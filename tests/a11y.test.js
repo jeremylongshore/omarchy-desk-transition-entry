@@ -12,11 +12,15 @@ test("bar control is a dynamically named accessible button", () => {
   assert.match(qml, /Accessible\.name: root\.opened \? "Close Desk Transition" : "Open Desk Transition"/)
 })
 
-test("both visual scene cards expose specific accessible actions", () => {
+test("both visual scene cards and every output row expose specific accessible actions", () => {
   const qml = read("Panel.qml")
-  assert.equal((qml.match(/Accessible\.role: Accessible\.Button/g) || []).length, 2)
+  assert.equal((qml.match(/Accessible\.role: Accessible\.Button/g) || []).length, 3)
   assert.match(qml, /Accessible\.name: "Apply Desk scene"/)
   assert.match(qml, /Accessible\.name: "Apply Laptop scene"/)
+  assert.match(qml, /Accessible\.name: "Focus " \+ modelData\.name/)
+  assert.match(qml, /Accessible\.onPressAction: root\.run\(\["--desk"\]\)/)
+  assert.match(qml, /Accessible\.onPressAction: root\.run\(\["--laptop"\]\)/)
+  assert.match(qml, /Accessible\.onPressAction: root\.run\(\["--focus", modelData\.name\]\)/)
   assert.match(qml, /onCloseRequested: root\.close\(\)/)
   assert.match(qml, /onTabRequested:/)
 })
@@ -27,5 +31,5 @@ test("action status is wrapped, plain text, and announced", () => {
   assert.match(qml, /textFormat: Text\.PlainText/)
   assert.match(qml, /Accessible\.role: Accessible\.StaticText/)
   assert.match(qml, /Accessible\.name: root\.actionStatus/)
-  assert.match(qml, /Accessible\.name: "Local inventory\. Zero outputs disabled\."/)
+  assert.match(qml, /Accessible\.name: Model\.inventorySpoken\(root\.state, root\.loaded\)/)
 })

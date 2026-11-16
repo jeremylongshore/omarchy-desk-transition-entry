@@ -1,20 +1,167 @@
 #!/usr/bin/env bash
 # Safe display scenes: only active, current Hyprland outputs are targeted.
+#
+# Hyprland 0.57 and later reads a Lua config. There `hyprctl dispatch X` runs
+# `return hl.dispatch(X)` (src/ipc/s1/Commands.cpp:1332-1346 at tag v0.57.2),
+# `hyprctl eval` runs Lua (Commands.cpp:1316-1330), and `hyprctl keyword` no
+# longer exists: the server answers "unknown request" (S1.cpp:107) and hyprctl
+# still exits 0. So every action sends the Lua form first and the classic form
+# second, for older releases, and an attempt counts only when hyprctl prints
+# exactly "ok" and exits 0. A miss prints a "warning: ..." line, a Lua syntax
+# error prints "error: ..." and exits 7 (hyprctl/src/main.cpp:285), and neither
+# is a success.
 set -euo pipefail
 export LC_ALL=C
-monitors() {
-  local raw
-  raw="$(timeout 3s hyprctl -j monitors 2>/dev/null | head -c 65537)" || { printf '[]'; return; }
-  (( ${#raw} <= 65536 )) || { printf '[]'; return; }
-  jq -c '[limit(8; .[]
-    | select((.name | type) == "string" and (.name | length) <= 32 and (.name | test("^[A-Za-z0-9._-]+$")))
-    | {name,
-       width: ((.width // 0) | if type == "number" then (floor | if . < 0 then 0 elif . > 20000 then 20000 else . end) else 0 end),
-       height: ((.height // 0) | if type == "number" then (floor | if . < 0 then 0 elif . > 20000 then 20000 else . end) else 0 end),
-       focused: (.focused == true)})]' <<<"$raw" 2>/dev/null || printf '[]'
+
+NAME_RE='^[A-Za-z0-9._-]+$'
+LAST_REPLY=""
+
+# Run hyprctl once. Succeeds only on the exact reply "ok" with exit status 0, and
+# remembers the first line of whatever it printed for the failure note.
+hypr_ok() {
+  local out rc=0
+  out="$(timeout 6s hyprctl "$@" 2>&1 | head -c 2048)" || rc=$?
+  LAST_REPLY="${out%%$'\n'*}"
+  [[ "$rc" -eq 0 && "$out" == "ok" ]]
 }
-scan() { jq -cn --argjson monitors "$(monitors)" '{monitors:$monitors}'; }
-focus() { local name="$1"; monitors | jq -e --arg n "$name" '.[] | select(.name==$n)' >/dev/null || exit 2; hyprctl dispatch focusmonitor "$name"; scan; }
-desk() { local x=0 name width; while IFS=$'\t' read -r name width; do hyprctl keyword monitor "$name,preferred,${x}x0,1"; x=$((x + width)); done < <(monitors | jq -r '.[] | [.name,(.width|tonumber)] | @tsv'); scan; }
-laptop() { local name; name="$(monitors | jq -r '.[] | select(.name|test("^(eDP|LVDS)")) | .name' | head -n1)"; [[ -n "$name" ]] && focus "$name" || scan; }
-case "${1:---scan}" in --scan) scan ;; --desk) desk ;; --laptop) laptop ;; --focus) focus "${2:-}" ;; *) exit 2 ;; esac
+
+note() {
+  local reply="${LAST_REPLY//[^[:print:]]/}"
+  printf 'desk-transition: %s%s\n' "$1" "${reply:+ (hyprctl said: ${reply:0:160})}" >&2
+}
+
+# One bounded read of the compositor. Active outputs (up to eight, with the
+# fields an arrangement needs) and a count of outputs the system has disabled.
+# Connector names are validated here against a closed character set, so nothing
+# downstream can carry a quote, backslash, newline or option into a Lua string or
+# an argv. (A negated class, not an anchored pattern: jq's regex lets "$" match
+# before a trailing newline, so "^[A-Za-z0-9._-]+$" admits "DP-1\n".)
+inventory() {
+  local raw
+  raw="$(timeout 3s hyprctl -j monitors all 2>/dev/null | head -c 65537)" || { printf '{"active":[],"disabled":0}'; return; }
+  (( ${#raw} <= 65536 )) || { printf '{"active":[],"disabled":0}'; return; }
+  jq -c '
+    def dim: if type == "number" then (floor | if . < 0 then 0 elif . > 20000 then 20000 else . end) else 0 end;
+    def within($lo; $hi; $fallback): if type == "number" and . >= $lo and . <= $hi then . else $fallback end;
+    [.[]
+     | select((.name | type) == "string" and (.name | length) >= 1 and (.name | length) <= 32
+              and ((.name | test("[^A-Za-z0-9._-]")) | not))
+     | {name,
+        disabled: (.disabled == true),
+        focused: (.focused == true),
+        width: ((.width // 0) | dim),
+        height: ((.height // 0) | dim),
+        refresh: ((.refreshRate // 0) | within(0; 1000; 0)),
+        scale: ((.scale // 1) | within(0.25; 16; 1)),
+        transform: ((.transform // 0) | within(0; 7; 0) | floor),
+        mirrored: ((.mirrorOf // "none") != "none")}]
+    | {active: ([.[] | select(.disabled | not)] | .[0:8]),
+       disabled: ([.[] | select(.disabled)] | length | if . > 8 then 8 else . end)}' <<<"$raw" 2>/dev/null \
+    || printf '{"active":[],"disabled":0}'
+}
+
+scan() {
+  jq -cn --argjson all "$(inventory)" \
+    '{monitors: [$all.active[] | {name, width, height, focused}], disabled: $all.disabled}'
+}
+
+# Focus one active output. Lua form first, classic second.
+focus() {
+  local name="$1"
+  [[ "$name" =~ $NAME_RE ]] || exit 2
+  inventory | jq -e --arg n "$name" '.active[] | select(.name == $n)' >/dev/null || exit 2
+  if hypr_ok dispatch "hl.dsp.focus({ monitor = \"$name\" })" \
+    || hypr_ok dispatch focusmonitor "$name"; then
+    scan
+  else
+    note "Hyprland did not focus $name"
+    scan
+    exit 1
+  fi
+}
+
+# Lay the active outputs out left to right, top aligned, in one step.
+#
+# Position only. Hyprland 0.57's hl.monitor starts from the existing rule with
+# the same name and changes only the fields it is given
+# (LuaBindingsConfigRules.cpp:1098-1100, 1134), so mode, refresh rate, scale and
+# rotation stay as they are; it is the call Omarchy's own layout script makes
+# (omarchy-hyprland-monitor-layout:120-124). An output with no rule of its own
+# starts from the defaults, which match Omarchy's stock rule for every output
+# (default/hypr/monitors.lua:5 at 74de104).
+# Positions are logical pixels, after scale and rotation, so each output
+# advances by its scaled width, not its mode width.
+# Every output is placed in one eval so none passes through a half-moved layout.
+#
+# The classic fallback for releases with no Lua replaces the whole rule, so it
+# passes the output's current mode@refresh, scale and rotation back in. An output
+# that mirrors another is left out, as Omarchy's layout script does.
+desk() {
+  local rows=() row name logical mode scale turn x=0 position expr="" failed=0
+  local -a placed=()
+  mapfile -t rows < <(inventory | jq -r '
+    .active[] | select(.mirrored | not)
+    | (if (.transform % 2) == 1 then .height else .width end) as $across
+    | [.name,
+       ([($across / .scale | round), 1] | max),
+       (if .refresh > 0 then "\(.width)x\(.height)@\((.refresh * 100 | round) / 100)" else "\(.width)x\(.height)" end),
+       .scale,
+       .transform]
+    | @tsv')
+  if (( ${#rows[@]} == 0 )); then
+    note "No active display to arrange"
+    scan
+    exit 3
+  fi
+
+  for row in "${rows[@]}"; do
+    IFS=$'\t' read -r name logical mode scale turn <<<"$row"
+    position="${x}x0"
+    [[ "$name" =~ $NAME_RE && "$position" =~ ^-?[0-9]+x-?[0-9]+$ ]] || { failed=1; continue; }
+    expr+="hl.monitor({ output = \"$name\", position = \"$position\" }) "
+    placed+=("$name,$mode,$position,$scale,transform,$turn")
+    x=$((x + logical))
+  done
+
+  if (( failed == 0 )) && hypr_ok eval "${expr% }"; then
+    scan
+    return
+  fi
+
+  failed=0
+  local rule
+  for rule in "${placed[@]}"; do
+    IFS=, read -r name mode position scale _ turn <<<"$rule"
+    if [[ "$mode" =~ ^[0-9]+x[0-9]+(@[0-9]+([.][0-9]+)?)?$ && "$scale" =~ ^[0-9]+([.][0-9]+)?$ && "$turn" =~ ^[0-7]$ ]] \
+      && hypr_ok keyword monitor "$name,$mode,$position,$scale,transform,$turn"; then
+      continue
+    fi
+    failed=1
+  done
+  if (( failed == 1 )); then
+    note "Hyprland did not arrange the displays"
+    scan
+    exit 1
+  fi
+  scan
+}
+
+laptop() {
+  local name
+  name="$(inventory | jq -r '[.active[] | select(.name | test("^(eDP|LVDS)"))][0].name // empty')"
+  if [[ -n "$name" ]]; then
+    focus "$name"
+  else
+    note "No active internal display"
+    scan
+    exit 3
+  fi
+}
+
+case "${1:---scan}" in
+  --scan) scan ;;
+  --desk) desk ;;
+  --laptop) laptop ;;
+  --focus) focus "${2:-}" ;;
+  *) exit 2 ;;
+esac

@@ -48,6 +48,6 @@ jobs:
       - name: Deterministic audit profile
         if: steps.scope.outputs.run_full == 'true'
         run: npm run audit
-      - name: ShellCheck runtime, developer, and E2E scripts
+      - name: ShellCheck runtime helper, developer, and E2E scripts
         if: steps.scope.outputs.run_full == 'true'
-        run: shellcheck --severity=warning scripts/*.sh e2e/*.sh .githooks/pre-push
+        run: shellcheck --severity=warning scripts/*.sh e2e/*.sh .githooks/pre-push bin/desk-transition tests/hyprctl-stub.sh

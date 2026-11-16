@@ -109,6 +109,18 @@ REMOTE_SHA="$(echo "$RESULT" | tail -n1 | awk '{print $3}')"
 [[ "$QMLLINT"  =~ ^[0-9]+$ ]] || QMLLINT=1
 [[ "$REMOTE_SHA" == "$ARCHIVE_SHA" ]] || VALIDATE=1
 
+# The rig's identity, read from the rig itself, so the receipt says what the
+# check ran against rather than when it ran.
+RIG_IDENTITY="$(ssh -o BatchMode=yes "$HOST" "docker exec -i $CONTAINER sh -s" 2>/dev/null <<'IDENT'
+printf 'omarchy=%s\n' "$(git -C /root/omarchy rev-parse HEAD 2>/dev/null)"
+printf 'qt6Base=%s\n' "$(pacman -Q qt6-base 2>/dev/null | cut -d' ' -f2)"
+printf 'quickshell=%s\n' "$(pacman -Q quickshell 2>/dev/null | cut -d' ' -f2)"
+printf 'hyprlandPackage=%s\n' "$(pacman -Q hyprland 2>/dev/null | cut -d' ' -f2)"
+printf 'qmllint=%s\n' "$(/usr/lib/qt6/bin/qmllint --version 2>/dev/null | awk '{print $2}')"
+IDENT
+)" || RIG_IDENTITY=""
+rig_field() { printf '%s\n' "$RIG_IDENTITY" | sed -n "s/^$1=//p" | head -n1; }
+
 echo "  omarchy-plugin-validate: exit $VALIDATE"
 echo "  qmllint errors:          $QMLLINT"
 
@@ -117,9 +129,14 @@ echo "  qmllint errors:          $QMLLINT"
 jq -n --arg fp "$FP" --arg commit "$SOURCE_COMMIT" --argjson dirty "$SOURCE_DIRTY" \
       --arg archive "$ARCHIVE_SHA" --arg remote "$REMOTE_SHA" --arg rig "$HOST/$CONTAINER" \
       --argjson v "$VALIDATE" --argjson q "$QMLLINT" \
+      --arg omarchy "$(rig_field omarchy)" --arg qt "$(rig_field qt6Base)" \
+      --arg quickshell "$(rig_field quickshell)" --arg hyprland "$(rig_field hyprlandPackage)" \
+      --arg qmllint "$(rig_field qmllint)" \
       --argjson at "$(date +%s)" --arg iso "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   '{fingerprint:$fp, sourceCommit:$commit, sourceDirty:$dirty,
     sourcePackageSha256:$archive, remotePackageSha256:$remote, rig:$rig,
+    rigIdentity:{omarchyCommit:$omarchy, qt6Base:$qt, quickshell:$quickshell,
+      hyprlandPackage:$hyprland, qmllint:$qmllint},
     evidenceBoundary:"real Omarchy validator and qmllint; no live compositor render",
     omarchyPluginValidate:$v, qmllintErrors:$q,
     validatedAtEpoch:$at, validatedAt:$iso}' > "$TARGET/.rig-proof.json"

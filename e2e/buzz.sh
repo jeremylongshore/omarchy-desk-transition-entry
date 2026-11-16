@@ -8,7 +8,9 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 "$ROOT/scripts/rig-render.sh" "$ROOT" "$ROOT/preview.png"
 test -s "$ROOT/preview.png"
 jq -e '.sourceDirty == false and .sourcePackageSha256 == .remotePackageSha256
-  and .omarchyPluginValidate == 0 and .qmllintErrors == 0' \
+  and .omarchyPluginValidate == 0 and .qmllintErrors == 0
+  and (.rigIdentity.omarchyCommit | test("^[0-9a-f]{40}$"))
+  and (.rigIdentity.qt6Base | length > 0)' \
   "$ROOT/.rig-proof.json" >/dev/null
 jq -e '.sourceDirty == false and .sourcePackageSha256 == .remotePackageSha256
   and (.previewSha256 | length == 64) and .dimensions == "1280 x 720"
@@ -16,7 +18,15 @@ jq -e '.sourceDirty == false and .sourcePackageSha256 == .remotePackageSha256
   and (.rawShellLogSha256 | length == 64)
   and .storyEvidence.monitorCount == 2
   and .storyEvidence.deskCommands == 2
+  and .storyEvidence.deskEvals == 1
   and .storyEvidence.laptopCommands == 1
+  and .storyEvidence.classicCommands == 0
+  and .storyEvidence.layout == {"eDP-1": "0x0", "DP-1": "1440x0"}
+  and .storyEvidence.rulesKept == true
+  and .storyEvidence.focusedOutput == "eDP-1"
+  and (.hyprctlStubSha256 | length == 64)
+  and (.rigIdentity.omarchyCommit | test("^[0-9a-f]{40}$"))
+  and (.rigIdentity.qt6Base | length > 0)
   and .storyEvidence.disableCommands == 0 and .outputScale == 1.25
   and .visualInspection.status == "pending"
   and .primaryAction == "live IPC applied both display scenes and opened the populated panel"' \
