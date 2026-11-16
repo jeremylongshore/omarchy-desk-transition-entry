@@ -1,40 +1,56 @@
 {
-  "fingerprint": "cce29fca2636090c0f10cd3102a8de003c5e379d4e2ad9aebed98aec6e768d26",
-  "sourceCommit": "018b7f615bad86e2ceafc1bd79a138357d59819e",
+  "fingerprint": "276b71c40dc912b2fb69ce6f7a91a4d0a44d7216c8005741ef3e2468a2db573e",
+  "sourceCommit": "8d34ec2e23b9cf4b8810de80e15d29f37edd0696",
   "sourceDirty": false,
-  "sourcePackageSha256": "84096e9002d6614ca08a6c72e6505fcc4774ac531343f7e33a61e4f414709ad0",
-  "remotePackageSha256": "84096e9002d6614ca08a6c72e6505fcc4774ac531343f7e33a61e4f414709ad0",
+  "sourcePackageSha256": "b089640444e1a297446dc42c479857e70b84c2090d533cb5c04f86c76cfc82f7",
+  "remotePackageSha256": "b089640444e1a297446dc42c479857e70b84c2090d533cb5c04f86c76cfc82f7",
   "rig": "intent-ops-buzz/omarchy-rig",
-  "runId": "desk-transition-85410",
-  "rawShellLogSha256": "abc7a5923652905e22eb59426fa6df7f5ca3769192e18417a83cd13a9b834c3f",
-  "hyprlandActionLogSha256": "ce7b9dc711725c44763c12bf9bbc37b8f8ccd205679101987490fab6daaac570",
-  "fixtureSha256": "72665a1603d1e88bf8baabd45acb42e0b75500de91d9a048c3a3eff7b14cc7f7",
+  "runId": "desk-transition-1887399",
+  "rawShellLogSha256": "a509761e385c66c508072e7e5d0f21adb674f81b93e0ff107eea5af2722ad930",
+  "hyprlandActionLogSha256": "5c0cb814c29d5379d427a38102673b4a4c02df78d1f9a1383bec0f887782d6bd",
+  "fixtureSha256": "4bd3221296572742b99dd7c499a7e268d332d74cdf6b1a89951a75d2779ce78a",
   "packageBoundary": "repository shipment excluding receipts, tests, developer scripts, reports, and preview",
-  "evidenceBoundary": "isolated real Omarchy shell and unchanged QML/helper under a dedicated headless compositor; deterministic local Hyprland inventory; live IPC Desk and Laptop actions; direct full-frame grim capture with no crop or image post-processing",
-  "fixture": "rig-only two-output Hyprland inventory and argv recorder; no production fixture branch",
+  "evidenceBoundary": "isolated real Omarchy shell and unchanged QML/helper under a dedicated headless compositor (sway, not Hyprland); a stand-in hyprctl that models Hyprland 0.57.2 Lua-config replies over a deterministic two-output inventory; live IPC Desk and Laptop actions; direct full-frame grim capture with no crop or image post-processing",
+  "fixture": "rig-only two-output Hyprland inventory (HiDPI laptop panel plus 1440p monitor), per-output rules, and the tests/hyprctl-stub.sh argv recorder; no production fixture branch",
+  "hyprctlStubSha256": "9137fea04fa31e21dda881ee57b0602d361458aecc0104f97200ece782a8d49f",
+  "theme": "tokyo-night",
+  "rigIdentity": {
+    "omarchyCommit": "74de10479d3bf7aa7865408e33219064cfe45432",
+    "qt6Base": "6.12.0-5",
+    "quickshell": "0.3.2-1",
+    "hyprlandPackage": "0.57.2-1",
+    "qmllint": "6.12.0"
+  },
   "primaryAction": "live IPC applied both display scenes and opened the populated panel",
   "storyEvidence": {
     "monitorCount": 2,
     "deskCommands": 2,
+    "deskEvals": 1,
     "laptopCommands": 1,
+    "classicCommands": 0,
     "disableCommands": 0,
     "focusedOutput": "eDP-1",
-    "externalOutput": "DP-1"
+    "externalOutput": "DP-1",
+    "layout": {
+      "eDP-1": "0x0",
+      "DP-1": "1440x0"
+    },
+    "rulesKept": true
   },
   "outputScale": 1.25,
   "visualInspection": {
     "status": "approved",
-    "previewSha256": "57f1235f9fc4b095f59df766ac16ec490edf40109f898ad5b7889dde3255a47f",
+    "previewSha256": "8d46954f2690fb3e8b484e05653fe5904bb3caa36fff0ac556faacf3ebc7de1e",
     "inspector": "Claude (agent) for jeremylongshore",
-    "inspectedAt": "2026-11-15T08:36:28Z",
+    "inspectedAt": "2026-11-16T00:16:33Z",
     "checks": [
       "product value visible at marketplace scale",
       "no primary content clipped",
       "plugin-specific visual identity"
     ]
   },
-  "previewSha256": "57f1235f9fc4b095f59df766ac16ec490edf40109f898ad5b7889dde3255a47f",
+  "previewSha256": "8d46954f2690fb3e8b484e05653fe5904bb3caa36fff0ac556faacf3ebc7de1e",
   "dimensions": "1280 x 720",
-  "nonblackCoverage": 0.382883,
-  "capturedAt": "2026-11-15T08:36:22Z"
+  "nonblackCoverage": 0.998078,
+  "capturedAt": "2026-11-16T00:16:20Z"
 }
